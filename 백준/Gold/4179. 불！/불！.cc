@@ -9,7 +9,7 @@ using namespace std;
 int dx[]{ 0, 1, 0, -1 };
 int dy[]{ 1, 0, -1, 0 };
 
-int r, c, ans = 2000000;
+int r, c;
 pair<int, int> jPos;
 vector<pair<int, int>> fPos;
 char maze[1001][1001];
@@ -38,7 +38,7 @@ void findFTime(pair<int, int> pos)
 	}
 }
 
-void FindJTime()
+bool FindJTime()
 {
 	queue<pair<int, int>> q;
 	q.push(jPos);
@@ -46,6 +46,11 @@ void FindJTime()
 	while (!q.empty())
 	{
 		pair<int, int> curPos = q.front(); q.pop();
+		if (curPos.row == r - 1 || curPos.row == 0 || curPos.col == c - 1 || curPos.col == 0)
+		{
+			cout << jTime[curPos.row][curPos.col];
+			return true;
+		}
 		for (int i = 0; i < 4; i++)
 		{
 			pair<int, int> nextPos = make_pair(curPos.row + dy[i], curPos.col + dx[i]);
@@ -57,6 +62,8 @@ void FindJTime()
 			q.push(nextPos);
 		}
 	}
+
+	return false;
 }
 
 int main()
@@ -82,22 +89,5 @@ int main()
 		findFTime(pos);
 
 	// 각 위치별 지훈이 도달 시간 구하기
-	FindJTime();
-
-	// 지훈이가 미로의 가장자리에 도착하는 가장 빠른 시간 구하기
-	// 0행
-	for (int i = 0; i < c; i++)
-		if (0 < jTime[0][i] && jTime[0][i] < ans) ans = jTime[0][i];
-	// r - 1행
-	for (int i = 0; i < c; i++)
-		if (0 < jTime[r - 1][i] && jTime[r - 1][i] < ans) ans = jTime[r - 1][i];
-	// 중간 행
-	for (int i = 1; i < r - 1; i++)
-	{
-		if (0 < jTime[i][0] && jTime[i][0] < ans) ans = jTime[i][0];
-		if (0 < jTime[i][c - 1] && jTime[i][c - 1] < ans) ans = jTime[i][c - 1];
-	}
-
-	if (ans == 2000000) cout << "IMPOSSIBLE";
-	else cout << ans;
+	if (!FindJTime()) cout << "IMPOSSIBLE";
 }
