@@ -15,7 +15,7 @@ void bfs()
 		{
 			int nextPos = curPos + 1;
 			if (nextPos < 0 || nextPos > 100000);
-			else if (times[nextPos] == 0 || times[nextPos] > times[curPos] + 1)
+			else if (times[nextPos] == 0)
 			{
 				times[nextPos] = times[curPos] + 1;
 				q.push(nextPos);
@@ -24,7 +24,7 @@ void bfs()
 		{
 			int nextPos = curPos - 1;
 			if (nextPos < 0 || nextPos > 100000);
-			else if (times[nextPos] == 0 || times[nextPos] > times[curPos] + 1)
+			else if (times[nextPos] == 0)
 			{
 				times[nextPos] = times[curPos] + 1;
 				q.push(nextPos);
@@ -33,7 +33,7 @@ void bfs()
 		{
 			int nextPos = curPos * 2;
 			if (nextPos < 0 || nextPos > 100000);
-			else if (times[nextPos] == 0 || times[nextPos] > times[curPos] + 1)
+			else if (times[nextPos] == 0)
 			{
 				times[nextPos] = times[curPos] + 1;
 				q.push(nextPos);
