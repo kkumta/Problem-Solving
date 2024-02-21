@@ -2,7 +2,7 @@
 using namespace std;
 
 int N, M;
-int arr[9];
+int arr[8];
 
 void func(int k)
 {
