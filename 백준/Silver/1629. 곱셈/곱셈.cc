@@ -9,17 +9,19 @@ long long func(long long b)
 	if (b == 0)
 		return 1;
 	if (b == 1)
-		return A;
+		return A % C;
+	
+	long long d = func(b / 2);
 	
 	if (b % 2 == 0)
-		return func(b / 2) * func(b / 2) % C;
+		return d * d % C;
 	else
-		return (func(b / 2) * func(b / 2) % C) * A % C;
+		return (d * d % C) * A % C;
 }
 
 int main()
 {
 	cin >> A >> B >> C;
-	cout << func(B) % C;
+	cout << func(B);
 	return 0;
 }
