@@ -1,26 +1,25 @@
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
-int A, B, C;
+long long A, B, C;
+long long ret;
 
-long long func(int b)
+long long func(long long b)
 {
-	if (b == 1) return A % C;
-
-	long long div = func(b / 2);
-	// 짝수일 경우
+	if (b == 0)
+		return 1;
+	if (b == 1)
+		return A;
+	
 	if (b % 2 == 0)
-		return div * div % C;
-	// 홀수일 경우
+		return func(b / 2) * func(b / 2) % C;
 	else
-		return (div * div % C) * A % C;
+		return (func(b / 2) * func(b / 2) % C) * A % C;
 }
 
 int main()
 {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
 	cin >> A >> B >> C;
-
-	cout << func(B);
+	cout << func(B) % C;
+	return 0;
 }
