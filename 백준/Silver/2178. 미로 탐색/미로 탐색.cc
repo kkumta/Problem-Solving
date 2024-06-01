@@ -1,52 +1,47 @@
-#include <queue>
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
-int dy[]{ 1, 0, -1, 0 };
-int dx[]{ 0, 1, 0, -1 };
-
 int N, M;
-char maze[101][101];
-int times[101][101];
+int maps[100][100];
+int cnt[100][100];
+queue<pair<int, int>> q;
 
-void BFS()
+int dy[] = {0, 1, 0, -1};
+int dx[] = {1, 0, -1, 0};
+
+void bfs(int y, int x)
 {
-	times[0][0] = 1;
-	queue<pair<int, int>> q;
-	q.push(make_pair(0, 0));
-
+	cnt[y][x] = 1;
+	q.push(make_pair(y, x));
 	while (!q.empty())
 	{
-		pair<int, int> curPos = q.front();
-		if (curPos.first == N - 1 && curPos.second == M - 1) return;
-		q.pop();
+		pair<int, int> curPos = q.front(); q.pop();
 		for (int i = 0; i < 4; i++)
 		{
-			pair<int, int> nextPos = make_pair(curPos.first + dy[i], curPos.second + dx[i]);
-			if (nextPos.first < 0 || nextPos.first >= N || M <= nextPos.second || nextPos.second < 0) continue;
-			if (maze[nextPos.first][nextPos.second] == '0') continue;
-			if (times[nextPos.first][nextPos.second] != 0) continue;
-			times[nextPos.first][nextPos.second] = times[curPos.first][curPos.second] + 1;
-			q.push(nextPos);
+			int nextY = curPos.first + dy[i];
+			int nextX = curPos.second + dx[i];
+			
+			if (nextY < 0 || nextY >= N || nextX < 0 || nextX >= M) continue;
+			if (maps[nextY][nextX] == 0) continue;
+			if (cnt[nextY][nextX] != 0) continue;
+			cnt[nextY][nextX] = cnt[curPos.first][curPos.second] + 1;
+			q.push(make_pair(nextY, nextX));
 		}
 	}
 }
 
 int main()
 {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-
 	cin >> N >> M;
 	for (int i = 0; i < N; i++)
 	{
-		string temp;
-		cin >> temp;
+		string tmp;
+		cin >> tmp;
 		for (int j = 0; j < M; j++)
-			maze[i][j] = temp[j];
+			maps[i][j] = tmp[j] - '0';
 	}
 
-	BFS();
-
-	cout << times[N - 1][M - 1];
+	bfs(0, 0);
+	
+	cout << cnt[N - 1][M - 1];
 }
