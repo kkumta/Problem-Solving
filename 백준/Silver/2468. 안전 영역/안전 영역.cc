@@ -1,72 +1,53 @@
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
 using namespace std;
 
-void search(pair<int, int> here, int height);
+int N;
+int maps[100][100];
+bool visited[100][100];
+int h, ans = 1;
 
-int n, answer = 1; // 비가 오지 않는 경우 1개의 안전한 영역이 존재한다.
-vector<vector<int>> map;
-vector<vector<bool>> visited;
+int dy[] = {0, -1, 0, 1};
+int dx[] = {1, 0, -1, 0};
 
-vector<pair<int, int>> dxy = { {0,1}, {1, 0}, {-1, 0}, {0, -1} };
+void dfs(int y, int x, int h)
+{
+	for (int i = 0; i < 4; i++)
+	{
+		int ny = y + dy[i];
+		int nx = x + dx[i];
+		
+		if (ny < 0 || ny >= N || nx < 0 || nx >= N) continue;
+		if (maps[ny][nx] <= h) continue;
+		if (visited[ny][nx]) continue;
+		
+		visited[ny][nx] = true;
+		dfs(ny, nx, h);
+	}
+}
 
 int main()
 {
-	// map 초기화
-	cin >> n;
-	map = vector<vector<int>>(n);
-	for (int i = 0; i < n; i++)
-		map[i] = vector<int>(n);
-
-	for (int i = 0; i < n; i++)
-	{
-		for (int j = 0; j < n; j++)
-			cin >> map[i][j];
-	}
-
-	// visited 초기화
-	visited = vector<vector<bool>>(n);
-	for (int i = 0; i < n; i++)
-		visited[i] = vector<bool>(n);
-
-	// 안전한 영역의 개수 구하기
-	for (int height = 1; height <= 100; height++)
-	{
-		fill(visited.begin(), visited.end(), vector<bool>(n, false)); // visited 초기화
-		int count = 0; // 높이가 height일 때 안전한 영역의 개수
-		for (int row = 0; row < n; row++)
+	cin >> N;
+	for (int i = 0; i < N; i++)
+		for (int j = 0; j < N; j++)
 		{
-			for (int col = 0; col < n; col++)
-			{
-				if (map[row][col] > height && !visited[row][col])
-				{
-					search(make_pair(row, col), height);
-					count++;
-				}
-			}
+			cin >> maps[i][j];
+			if (maps[i][j] > h) h = maps[i][j];
 		}
-
-		if (count > answer)
-			answer = count;
-	}
-
-	cout << answer;
-}
-
-void search(pair<int, int> here, int height)
-{
-	visited[here.first][here.second] = true;
-	for (int i = 0; i < dxy.size(); i++)
+		
+	for (int i = 1; i <= h; i++)
 	{
-		pair<int, int> there = make_pair(here.first + dxy[i].first, here.second + dxy[i].second);
-
-		if (n <= there.first || there.first < 0 || n <= there.second || there.second < 0)
-			continue;
-		if (map[there.first][there.second] <= height)
-			continue;
-		if (visited[there.first][there.second])
-			continue;
-
-		search(there, height);
+		fill(&visited[0][0], &visited[0][0] + 100 * 100, false);
+		int cnt = 0;
+		for (int j = 0; j < N; j++)
+			for (int k = 0; k < N; k++)
+			{
+				if (maps[j][k] <= i || visited[j][k]) continue;
+				dfs(j, k, i);
+				cnt++;
+			}
+		if (cnt > ans) ans = cnt;
 	}
+	
+	cout << ans;
 }
