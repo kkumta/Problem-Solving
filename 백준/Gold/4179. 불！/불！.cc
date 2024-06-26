@@ -1,93 +1,107 @@
-#include <vector>
-#include <queue>
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
-#define row first
-#define col second
+int R, C, ret = 1000000;
+char maps[1000][1000];
+int f[1000][1000], jh[1000][1000];
+pair<int, int> jStart;
+vector<pair<int, int>> fList;
+int dy[] = {-1, 0, 1, 0};
+int dx[] = {0, -1, 0, 1};
 
-int dx[]{ 0, 1, 0, -1 };
-int dy[]{ 1, 0, -1, 0 };
-
-int r, c;
-pair<int, int> jPos;
-vector<pair<int, int>> fPos;
-char maze[1001][1001];
-int fTime[1001][1001];
-int jTime[1001][1001];
-
-void findFTime(pair<int, int> pos)
+void bfsFire()
 {
 	queue<pair<int, int>> q;
-	q.push(pos);
-	fTime[pos.row][pos.col] = 1;
+	for (pair<int, int> fire : fList)
+		q.push(fire);
+	
 	while (!q.empty())
 	{
-		pair<int, int> curPos = q.front(); q.pop();
+		int curY = q.front().first;
+		int curX = q.front().second;
+		q.pop();
+		
 		for (int i = 0; i < 4; i++)
 		{
-			pair<int, int> nextPos = make_pair(curPos.row + dy[i], curPos.col + dx[i]);
-			if (r <= nextPos.row || nextPos.row < 0 || c <= nextPos.col || nextPos.col < 0) continue;
-			if (maze[nextPos.row][nextPos.col] == '#') continue;
-			if (fTime[nextPos.row][nextPos.col] == 0 || fTime[nextPos.row][nextPos.col] > fTime[curPos.row][curPos.col] + 1)
-			{
-				fTime[nextPos.row][nextPos.col] = fTime[curPos.row][curPos.col] + 1;
-				q.push(nextPos);
-			}
+			int nextY = curY + dy[i];
+			int nextX = curX + dx[i];
+			
+			if (nextY >= R || nextY < 0 || nextX >= C || nextX < 0) continue;
+			if (maps[nextY][nextX] == '#') continue;
+			if (f[nextY][nextX] != 0 && f[nextY][nextX] <= f[curY][curX] + 1) continue;
+			f[nextY][nextX] = f[curY][curX] + 1;
+			q.push(make_pair(nextY, nextX));
 		}
 	}
 }
 
-bool FindJTime()
+void bfsJihoon()
 {
 	queue<pair<int, int>> q;
-	q.push(jPos);
-	jTime[jPos.row][jPos.col] = 1;
+	q.push(jStart);
+	
 	while (!q.empty())
 	{
-		pair<int, int> curPos = q.front(); q.pop();
-		if (curPos.row == r - 1 || curPos.row == 0 || curPos.col == c - 1 || curPos.col == 0)
-		{
-			cout << jTime[curPos.row][curPos.col];
-			return true;
-		}
+		int curY = q.front().first;
+		int curX = q.front().second;
+		q.pop();
+		
 		for (int i = 0; i < 4; i++)
 		{
-			pair<int, int> nextPos = make_pair(curPos.row + dy[i], curPos.col + dx[i]);
-			if (r <= nextPos.row || nextPos.row < 0 || c <= nextPos.col || nextPos.col < 0) continue;
-			if (maze[nextPos.row][nextPos.col] == '#') continue;
-			if (jTime[nextPos.row][nextPos.col] != 0) continue;
-			if (fTime[nextPos.row][nextPos.col] != 0 && fTime[nextPos.row][nextPos.col] <= jTime[curPos.row][curPos.col] + 1) continue;
-			jTime[nextPos.row][nextPos.col] = jTime[curPos.row][curPos.col] + 1;
-			q.push(nextPos);
+			int nextY = curY + dy[i];
+			int nextX = curX + dx[i];
+			
+			if (nextY >= R || nextY < 0 || nextX >= C || nextX < 0) continue;
+			if (maps[nextY][nextX] == '#') continue;
+			if (jh[nextY][nextX] != 0) continue;
+			if (f[nextY][nextX] != 0 && f[nextY][nextX] <= jh[curY][curX] + 1) continue;
+			jh[nextY][nextX] = jh[curY][curX] + 1;
+			q.push(make_pair(nextY, nextX));
 		}
 	}
-
-	return false;
+	
+	for (int i = 0; i < R; i++)
+	{
+		if (jh[i][0] != 0 && jh[i][0] < ret)
+			ret = jh[i][0];
+		if (jh[i][C - 1] != 0 && jh[i][C - 1] < ret)
+			ret = jh[i][C - 1];		
+	}
+	for (int i = 1; i < C - 1; i++)
+	{
+		if (jh[0][i] != 0 && jh[0][i] < ret)
+			ret = jh[0][i];
+		if (jh[R - 1][i] != 0 && jh[R - 1][i] < ret)
+			ret = jh[R - 1][i];		
+	}
 }
 
 int main()
 {
-	// 입력
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-	cin >> r >> c;
-	for (int i = 0; i < r; i++)
+	cin >> R >> C;
+	for (int i = 0; i < R; i++)
 	{
-		string row;
-		cin >> row;
-		for (int j = 0; j < c; j++)
+		string tmp;
+		cin >> tmp;
+		for (int j = 0; j < C; j++)
 		{
-			if (row[j] == 'F') fPos.push_back(make_pair(i, j));
-			else if (row[j] == 'J') jPos = make_pair(i, j);
-			else maze[i][j] = row[j];
+			if (tmp[j] == 'F')
+			{
+				fList.push_back(make_pair(i, j));
+				f[i][j] = 1;
+			}
+			else if (tmp[j] == 'J')
+			{
+				jStart = make_pair(i, j);
+				jh[i][j] = 1;
+			}
+			maps[i][j] = tmp[j];
 		}
 	}
-
-	// 각 위치별 불 도달 시간 구하기
-	for (pair<int, int> pos : fPos)
-		findFTime(pos);
-
-	// 각 위치별 지훈이 도달 시간 구하기
-	if (!FindJTime()) cout << "IMPOSSIBLE";
+	
+	bfsFire();
+	bfsJihoon();
+	
+	if (ret == 1000000) cout << "IMPOSSIBLE";
+	else cout << ret;
 }
