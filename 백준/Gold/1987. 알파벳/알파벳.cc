@@ -1,28 +1,26 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-int R, C, ret;
-char maps[20][20];
-bool visited[20][20], isUsed[26];
-int dy[]{0, 1, 0, -1};
-int dx[]{1, 0, -1, 0};
+int R, C, alpha, ret;
+int maps[20][20];
+int dy[] = {0, 1, 0, -1};
+int dx[] = {1, 0, -1, 0};
 
-void dfs(int y, int x, int depth)
+void dfs(pair<int, int> here, int depth)
 {
-	ret = max(depth, ret);
+	ret = max(ret, depth);
 	
 	for (int i = 0; i < 4; i++)
 	{
-		int ny = y + dy[i];
-		int nx = x + dx[i];
+		auto there = make_pair(here.first + dy[i], here.second + dx[i]);
+		if (there.first >= R || there.first < 0 || there.second >= C || there.second < 0)
+			continue;
+		if (alpha & (1 << maps[there.first][there.second]))
+			continue;
 		
-		if (ny < 0 || ny >= R || nx < 0 || nx >= C) continue;
-		if (visited[ny][nx] || isUsed[maps[ny][nx] - 'A']) continue;
-		visited[ny][nx] = true;
-		isUsed[maps[ny][nx] - 'A'] = true;
-		dfs(ny, nx, depth + 1);
-		visited[ny][nx] = false;
-		isUsed[maps[ny][nx] - 'A'] = false;
+		alpha |= (1 << maps[there.first][there.second]);
+		dfs(there, depth + 1);
+		alpha &= ~(1 << maps[there.first][there.second]);
 	}
 }
 
@@ -34,12 +32,11 @@ int main()
 		string tmp;
 		cin >> tmp;
 		for (int j = 0; j < C; j++)
-			maps[i][j] = tmp[j];
+			maps[i][j] = tmp[j] - 'A';
 	}
 	
-	visited[0][0] = true;
-	isUsed[maps[0][0] - 'A'] = true;
-	dfs(0, 0, 1);
+	alpha |= (1 << maps[0][0]);
+	dfs(make_pair(0, 0), 1);
 	
 	cout << ret;
 }
