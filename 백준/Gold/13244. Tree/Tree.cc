@@ -42,6 +42,9 @@ int main()
 	{
 		flag = true;
 		fill(&edges[0][0], &edges[0][0] + 1001 * 1001, false);
+		fill(&usedEdges[0][0], &usedEdges[0][0] + 1001 * 1001, false);
+		fill(&visitedNodes[0], &visitedNodes[0] + 1001, false);
+		
 		cin >> N >> M;
 		for (int j = 0; j < M; j++)
 		{
@@ -51,14 +54,8 @@ int main()
 			edges[b][a] = true;
 		}
 	
-		for (int j = 1; j <= N; j++)
-		{
-			fill(&usedEdges[0][0], &usedEdges[0][0] + 1001 * 1001, false);
-			fill(&visitedNodes[0], &visitedNodes[0] + 1001, false);
-			dfs(j);
-			check();
-			if (!flag) break;
-		}
+		dfs(1);
+		check();
 		
 		flag ? cout << "tree\n" : cout << "graph\n";
 	}
