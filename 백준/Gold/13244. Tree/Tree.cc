@@ -2,7 +2,7 @@
 using namespace std;
 
 int T, N, M, a, b, flag;
-bool edges[1001][1001], usedEdges[1001][1001], visitedNodes[1001];
+bool edges[1001][1001], visitedNodes[1001];
 
 void dfs(int node)
 {
@@ -16,10 +16,10 @@ void dfs(int node)
 	for (int i = 1; i <= N; i++)
 	{
 		if (i == node) continue;
-		if (edges[node][i] && !usedEdges[node][i])
+		if (edges[node][i])
 		{
-			usedEdges[node][i] = true;
-			usedEdges[i][node] = true;
+			edges[node][i] = false;
+			edges[i][node] = false;
 			dfs(i);	
 		}
 	}
@@ -42,7 +42,6 @@ int main()
 	{
 		flag = true;
 		fill(&edges[0][0], &edges[0][0] + 1001 * 1001, false);
-		fill(&usedEdges[0][0], &usedEdges[0][0] + 1001 * 1001, false);
 		fill(&visitedNodes[0], &visitedNodes[0] + 1001, false);
 		
 		cin >> N >> M;
