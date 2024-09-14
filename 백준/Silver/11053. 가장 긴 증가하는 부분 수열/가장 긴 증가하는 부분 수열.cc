@@ -1,30 +1,27 @@
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
-int n, ans;
-int a[1000], d[1000];
+int N, ret;
+int A[1000], len[1000];
 
 int main()
 {
-	ios::sync_with_stdio(0);
-	cin.tie(0);
-	cin >> n;
-
-	for (int i = 0; i < n; i++)
-		cin >> a[i];
-
-	d[0] = 1;
-	for (int i = 1; i < n; i++)
+	cin >> N;
+	for (int i = 0; i < N; i++)
+		cin >> A[i];
+	fill(len, len + N, 1);
+	
+	for (int i = 1; i < N; i++)
 	{
-		int max = 0;
 		for (int j = 0; j < i; j++)
-			if (a[i] > a[j] && d[j] > max)
-				max = d[j];
-		d[i] = max + 1;
+		{
+			if (A[j] < A[i] && len[j] + 1 > len[i])
+				len[i] = len[j] + 1;
+		}
 	}
-
-	for (int i = 0; i < n; i++)
-		if (d[i] > ans) ans = d[i];
-
-	cout << ans;
+	
+	for (int i = 0; i < N; i++)
+		ret = max(len[i], ret);
+	
+	cout << ret;
 }
